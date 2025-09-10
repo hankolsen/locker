@@ -1,13 +1,13 @@
-import Verisure from "verisure";
-import { overviewOperation } from "./operations";
+import Verisure from 'verisure';
+import { overviewOperation } from './operations';
 
 let installations: VerisureInstallation[] = [];
 let doorLockLabels: string[] = [];
 
 export const setupVerisure = async () => {
   const verisure = new Verisure(
-    process.env.VERISURE_EMAIL ?? "",
-    process.env.VERISURE_PASSWORD ?? "",
+    process.env.VERISURE_EMAIL ?? '',
+    process.env.VERISURE_PASSWORD ?? '',
   );
 
   await verisure.getToken();
@@ -24,7 +24,7 @@ export const lockDoors = async () => {
   doorLockLabels.forEach((deviceLabel) => {
     if (installations?.[0]) {
       installations[0].client({
-        operationName: "DoorLock",
+        operationName: 'DoorLock',
         variables: {
           deviceLabel,
           input: { code: process.env.VERISURE_LOCK_CODE },

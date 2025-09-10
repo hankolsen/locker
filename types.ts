@@ -1,13 +1,13 @@
 export type SIA_CODE =
-  | "BA"
-  | "BR"
-  | "BB"
-  | "BU"
-  | "CL"
-  | "NL"
-  | "OP"
-  | "ZC"
-  | "ZO";
+  | 'BA'
+  | 'BR'
+  | 'BB'
+  | 'BU'
+  | 'CL'
+  | 'NL'
+  | 'OP'
+  | 'ZC'
+  | 'ZO';
 
 export type WS_EVENT = {
   status: string;

@@ -20,6 +20,6 @@ declare class Verisure {
   getInstallations(): Promise<VerisureInstallation[]>;
 }
 
-declare module "verisure" {
+declare module 'verisure' {
   export = Verisure;
 }

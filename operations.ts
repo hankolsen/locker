@@ -1,5 +1,5 @@
 export const overviewOperation = {
-  operationName: "Overview",
+  operationName: 'Overview',
   query: `query Overview($giid: String!) {
       installation(giid: $giid) {
         alias

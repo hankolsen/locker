@@ -1,4 +1,4 @@
-import type { SIA_CODE } from "./types";
+import type { SIA_CODE } from './types';
 
 /**
  * BA: Burglar Alarm
@@ -16,4 +16,4 @@ import type { SIA_CODE } from "./types";
  * CL: Area Activated (Full Set)
  * NL: Area Activated (Part Set)
  */
-export const lockCodes: SIA_CODE[] = ["CL", "NL"];
+export const lockCodes: SIA_CODE[] = ['CL', 'NL'];
