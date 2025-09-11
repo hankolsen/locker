@@ -87,3 +87,14 @@ export const overviewOperation = {
       }
     }`,
 };
+
+export const doorLockOperation = (deviceLabel: string, code: string) => ({
+  operationName: 'DoorLock',
+  variables: {
+    deviceLabel,
+    input: { code },
+  },
+  query: `mutation DoorLock($giid: String!, $deviceLabel: String!, $input: LockDoorInput!) {
+      transactionId: DoorLock(giid: $giid, deviceLabel: $deviceLabel, input: $input)
+    }`,
+});

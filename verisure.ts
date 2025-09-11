@@ -1,8 +1,9 @@
 import Verisure from 'verisure';
-import { overviewOperation } from './operations';
+import { doorLockOperation, overviewOperation } from './operations';
 
 let installations: VerisureInstallation[] = [];
 let doorLockLabels: string[] = [];
+const code = process.env.VERISURE_LOCK_CODE ?? '';
 
 export const setupVerisure = async () => {
   const verisure = new Verisure(
@@ -23,16 +24,7 @@ export const setupVerisure = async () => {
 export const lockDoors = async () => {
   doorLockLabels.forEach((deviceLabel) => {
     if (installations?.[0]) {
-      installations[0].client({
-        operationName: 'DoorLock',
-        variables: {
-          deviceLabel,
-          input: { code: process.env.VERISURE_LOCK_CODE },
-        },
-        query: `mutation DoorLock($giid: String!, $deviceLabel: String!, $input: LockDoorInput!) {
-            transactionId: DoorLock(giid: $giid, deviceLabel: $deviceLabel, input: $input)
-          }`,
-      });
+      installations[0].client(doorLockOperation(deviceLabel, code));
     }
   });
 };
