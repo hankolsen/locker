@@ -20,7 +20,7 @@ Description=Lock doors when alarm is set
 After=network.target
 
 [Service]
-Type=notify
+Type=simple
 User=root
 WorkingDirectory=/opt/locker/
 ExecStart=/root/.bun/bin/bun run index.ts
