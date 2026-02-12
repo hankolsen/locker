@@ -1,5 +1,7 @@
 # locker
 
+Körs på pihole.
+
 To install dependencies:
 
 ```bash
