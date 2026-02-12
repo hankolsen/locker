@@ -38,24 +38,6 @@ export const overviewOperation = {
           __typename
         }
 
-        doorWindows {
-          device {
-            deviceLabel
-            area
-            gui {
-              support
-              label
-              __typename
-            }
-            __typename
-          }
-          type
-          state
-          wired
-          reportTime
-          __typename
-        }
-
         smartplugs {
           device {
             deviceLabel
