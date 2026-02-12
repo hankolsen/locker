@@ -29,7 +29,7 @@ export const setupSocketClient = (messageCallback: MessageCallback) => {
 
   socket.addEventListener('close', (event) => {
     console.log('WebSocket connection closed:', event.code, event.reason);
-    
+
     if (intervalTimer === undefined) {
       intervalTimer = setInterval(() => {
         console.log('Reconnecting');
