@@ -13,11 +13,15 @@ export const setupVerisure = async () => {
 
   await verisure.getToken();
   installations = await verisure.getInstallations();
-  const overview = await installations[0]?.client(overviewOperation);
-  if (overview) {
-    doorLockLabels = overview.installation.doorlocks.map(
-      ({ device }) => device.deviceLabel,
-    );
+  try {
+    const overview = await installations[0]?.client(overviewOperation);
+    if (overview) {
+      doorLockLabels = overview.installation.doorlocks.map(
+        ({ device }) => device.deviceLabel,
+      );
+    }
+  } catch (e) {
+    console.log({ e });
   }
 };
 
