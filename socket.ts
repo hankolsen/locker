@@ -7,6 +7,8 @@ const RECONNECT_INTERVAL = 30_000;
 let intervalTimer: NodeJS.Timeout | undefined = undefined;
 
 let socket: WebSocket;
+let reconnectCount = 0;
+const maxReconnectionAttempts = 10;
 
 const openConnection = () => {
   socket = new WebSocket(
@@ -21,6 +23,7 @@ export const setupSocketClient = (messageCallback: MessageCallback) => {
     console.log('Connected to server');
     clearInterval(intervalTimer);
     intervalTimer = undefined;
+    reconnectCount = 0;
   });
 
   socket.addEventListener('message', (event) => {
@@ -31,10 +34,14 @@ export const setupSocketClient = (messageCallback: MessageCallback) => {
     console.log('WebSocket connection closed:', event.code, event.reason);
 
     if (intervalTimer === undefined) {
-      intervalTimer = setInterval(() => {
-        console.log('Reconnecting');
-        openConnection();
-      }, RECONNECT_INTERVAL);
+      if (reconnectCount < maxReconnectionAttempts) {
+        reconnectCount += 1;
+        intervalTimer = setInterval(() => {
+          console.log('Reconnecting', reconnectCount);
+          openConnection();
+        }, RECONNECT_INTERVAL * reconnectCount);
+        
+      }
     }
   });
 
