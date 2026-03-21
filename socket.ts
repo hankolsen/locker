@@ -1,3 +1,5 @@
+import { sendTelegramMessage } from './telegram';
+
 /* Accept self signed certificate */
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -21,6 +23,7 @@ export const setupSocketClient = (messageCallback: MessageCallback) => {
 
   socket.addEventListener('open', () => {
     console.log('Connected to server');
+    sendTelegramMessage('✅ WebSocket connected');
     clearInterval(intervalTimer);
     intervalTimer = undefined;
     reconnectCount = 0;
@@ -32,6 +35,7 @@ export const setupSocketClient = (messageCallback: MessageCallback) => {
 
   socket.addEventListener('close', (event) => {
     console.log('WebSocket connection closed:', event.code, event.reason);
+    sendTelegramMessage('⚠️ WebSocket connection closed');
 
     if (intervalTimer === undefined) {
       if (reconnectCount < maxReconnectionAttempts) {
@@ -40,12 +44,12 @@ export const setupSocketClient = (messageCallback: MessageCallback) => {
           console.log('Reconnecting', reconnectCount);
           openConnection();
         }, RECONNECT_INTERVAL * reconnectCount);
-        
       }
     }
   });
 
   socket.addEventListener('error', (error) => {
     console.error('WebSocket error:', error);
+    sendTelegramMessage('🔴 WebSocket connection failed');
   });
 };
