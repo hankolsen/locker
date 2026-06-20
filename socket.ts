@@ -6,50 +6,55 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 type MessageCallback = (event: Bun.BunMessageEvent) => void;
 
 const RECONNECT_INTERVAL = 30_000;
-let intervalTimer: NodeJS.Timeout | undefined = undefined;
-
-let socket: WebSocket;
-let reconnectCount = 0;
 const maxReconnectionAttempts = 10;
+
+let reconnectCount = 0;
+let callback: MessageCallback;
+let socket: WebSocket | undefined;
 
 const openConnection = () => {
   socket = new WebSocket(
     `${process.env.SPC_WS_URL}?username=${process.env.SPC_WS_USER_NAME}&password=${process.env.SPC_WS_PASSWORD}`,
   );
+  socket.addEventListener('open', onWebsocketOpen);
+  socket.addEventListener('close', onWebsocketClose);
+  socket.addEventListener('message', onMessageCallback);
+  socket.addEventListener('error', onWebsocketError);
+};
+
+const onWebsocketOpen = () => {
+  console.log('Connected to server');
+  sendTelegramMessage('✅ WebSocket connected');
+  reconnectCount = 0;
+};
+
+const onWebsocketClose = (event: CloseEvent) => {
+  console.log('WebSocket connection closed:', event.code, event.reason);
+  sendTelegramMessage(`⚠️ WebSocket connection closed (${event.reason})`);
+
+  socket = undefined;
+  setTimeout(reconnect, RECONNECT_INTERVAL * (reconnectCount + 1));
+};
+
+const onWebsocketError = (event: Event) => {
+  console.error('WebSocket error:', event);
+  sendTelegramMessage(`🔴 WebSocket connection failed`);
+};
+
+const reconnect = () => {
+  if (reconnectCount < maxReconnectionAttempts) {
+    reconnectCount += 1;
+  }
+
+  console.log('Reconnecting', reconnectCount);
+  openConnection();
+};
+
+const onMessageCallback = (event: MessageEvent) => {
+  callback(event);
 };
 
 export const setupSocketClient = (messageCallback: MessageCallback) => {
+  callback = messageCallback;
   openConnection();
-
-  socket.addEventListener('open', () => {
-    console.log('Connected to server');
-    sendTelegramMessage('✅ WebSocket connected');
-    clearInterval(intervalTimer);
-    intervalTimer = undefined;
-    reconnectCount = 0;
-  });
-
-  socket.addEventListener('message', (event) => {
-    messageCallback(event);
-  });
-
-  socket.addEventListener('close', (event) => {
-    console.log('WebSocket connection closed:', event.code, event.reason);
-    sendTelegramMessage('⚠️ WebSocket connection closed');
-
-    if (intervalTimer === undefined) {
-      if (reconnectCount < maxReconnectionAttempts) {
-        reconnectCount += 1;
-        intervalTimer = setInterval(() => {
-          console.log('Reconnecting', reconnectCount);
-          openConnection();
-        }, RECONNECT_INTERVAL * reconnectCount);
-      }
-    }
-  });
-
-  socket.addEventListener('error', (error) => {
-    console.error('WebSocket error:', error);
-    sendTelegramMessage('🔴 WebSocket connection failed');
-  });
 };
